@@ -1,11 +1,19 @@
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.db import models
 
 from .models import Movie
-from .serializers import MovieListSerializer, MovieDetailSerializer, ReviewCreateSerializer, CreateRatingSerializer
+from .serializers import (
+    MovieListSerializer,
+    MovieDetailSerializer,
+    ReviewCreateSerializer,
+    CreateRatingSerializer,
+    ActorListSerializer,
+    ActorDetailSerializer
+)
 from .service import get_client_ip
-
+from .models import Actor
 
 class MovieListView(APIView):
     """Вывод списка фильмов"""
@@ -38,6 +46,7 @@ class ReviewCreateView(APIView):
 
 
 class AddStarRatingView(APIView):
+    """Добавления рейтинга к фильму"""
     def post(self, request):
         serializer = CreateRatingSerializer(data=request.data)
         if serializer.is_valid():
@@ -45,3 +54,15 @@ class AddStarRatingView(APIView):
             return Response(status=201)
         else:
             return Response(status=400)
+
+
+class ActorListView(generics.ListAPIView):
+    """Вывод списка актёров"""
+    queryset = Actor.objects.all()
+    serializer_class = ActorListSerializer
+
+
+class ActorDetailView(generics.RetrieveAPIView):
+    """Вывод списка актёров"""
+    queryset = Actor.objects.all()
+    serializer_class = ActorDetailSerializer
